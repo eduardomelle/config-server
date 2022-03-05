@@ -1,0 +1,40 @@
+version: "3"
+services:
+  service-registry:
+    image: eduardomelle/service-registry:1.0
+    ports:
+      - 8761:8761
+  cloud-config-server:
+    image: eduardomelle/cloud-config-server:1.0
+    ports:
+      - 9296:9296
+    depends_on:
+      - service-registry
+  department-service:
+    image: eduardomelle/department-service:1.0
+    ports:
+      - 9001:9001
+    depends_on:
+      - cloud-config-server
+  user-service:
+    image: eduardomelle/user-service:1.0
+    ports:
+      - 9002:9002
+    depends_on:
+      - department-service
+  cloud-gateway:
+    image: eduardomelle/cloud-gateway:1.0
+    ports:
+      - 9191:9191
+    depends_on:
+      - user-service
+  hystrix-dashboard:
+    image: eduardomelle/hystrix-dashboard:1.0
+    ports:
+      - 9295:9295
+    depends_on:
+      - cloud-config-server
+  zipkin:
+    image: openzipkin/zipkin:latest
+    ports:
+      - 9411:9411
